@@ -83,6 +83,10 @@ MainWindow::MainWindow(int argc, char **argv, bool &success, QWidget *parent) : 
     advanced_ctrl_widget_->ui_.checkBox_motor_speed_reverse  ->setStyleSheet(checkbox_qstr);
     advanced_ctrl_widget_->ui_.checkBox_motor_current_reverse->setStyleSheet(checkbox_qstr);
 
+    // Label
+    advanced_ctrl_widget_->ui_.label_motor_speed  ->setText("(100 % : " + QString::number(kVelMax) + " rpm)");
+    advanced_ctrl_widget_->ui_.label_motor_current->setText("(100 % : " + QString::number(kCurMax) + " mA)");
+
     // DATC control related btn
     QObject::connect(datc_ctrl_widget_->ui_.pushButton_cmd_enable  , SIGNAL(clicked()), this, SLOT(datcEnable()));
     QObject::connect(datc_ctrl_widget_->ui_.pushButton_cmd_disable , SIGNAL(clicked()), this, SLOT(datcDisable()));

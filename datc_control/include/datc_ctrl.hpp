@@ -31,7 +31,7 @@ const uint16_t kSpeedRatioMin  = 0;
 const uint16_t kSpeedRatioMax  = 100;
 
 const uint16_t kVelMin =  100;
-const uint16_t kVelMax = 1000;
+const uint16_t kVelMax =  900;
 const uint16_t kCurMax = 1200;
 
 enum class DATC_COMMAND {

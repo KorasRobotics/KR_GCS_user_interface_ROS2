@@ -16,7 +16,7 @@
    </font>
   </property>
   <property name="windowTitle">
-   <string>DATC Control Interface</string>
+   <string>KR-GCS User Interface</string>
   </property>
   <property name="styleSheet">
    <string notr="true">#centralwidget{
@@ -130,7 +130,7 @@ QLineEdit{
           <number>9</number>
          </property>
          <item>
-          <widget class="QLabel" name="label_8">
+          <widget class="QLabel" name="label_title_1">
            <property name="palette">
             <palette>
              <active>
@@ -172,17 +172,16 @@ QLineEdit{
             <font>
              <family>Noto Sans KR</family>
              <pointsize>24</pointsize>
-             <weight>75</weight>
              <bold>true</bold>
             </font>
            </property>
            <property name="text">
-            <string>DATC</string>
+            <string>KR-GCS</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="label_7">
+          <widget class="QLabel" name="label_title_2">
            <property name="palette">
             <palette>
              <active>
@@ -224,12 +223,11 @@ QLineEdit{
             <font>
              <family>Noto Sans KR</family>
              <pointsize>16</pointsize>
-             <weight>75</weight>
              <bold>true</bold>
             </font>
            </property>
            <property name="text">
-            <string>Control Interface  </string>
+            <string>User Interface  </string>
            </property>
           </widget>
          </item>
@@ -303,7 +301,6 @@ QLineEdit{
             <font>
              <family>Noto Sans KR</family>
              <pointsize>16</pointsize>
-             <weight>75</weight>
              <bold>true</bold>
             </font>
            </property>
@@ -318,7 +315,6 @@ QLineEdit{
             <font>
              <family>Noto Sans KR</family>
              <pointsize>13</pointsize>
-             <weight>75</weight>
              <bold>true</bold>
             </font>
            </property>
@@ -382,7 +378,6 @@ QLineEdit{
               <font>
                <family>Noto Sans KR</family>
                <pointsize>12</pointsize>
-               <weight>75</weight>
                <bold>true</bold>
               </font>
              </property>
@@ -409,7 +404,6 @@ QLineEdit{
               <font>
                <family>Noto Sans KR</family>
                <pointsize>12</pointsize>
-               <weight>75</weight>
                <bold>true</bold>
               </font>
              </property>
@@ -470,7 +464,6 @@ QLineEdit{
               <font>
                <family>Noto Sans KR</family>
                <pointsize>12</pointsize>
-               <weight>75</weight>
                <bold>true</bold>
               </font>
              </property>
@@ -497,7 +490,6 @@ QLineEdit{
               <font>
                <family>Noto Sans KR</family>
                <pointsize>12</pointsize>
-               <weight>75</weight>
                <bold>true</bold>
               </font>
              </property>
@@ -574,7 +566,6 @@ QLineEdit{
               <font>
                <family>Noto Sans KR</family>
                <pointsize>10</pointsize>
-               <weight>75</weight>
                <bold>true</bold>
               </font>
              </property>
@@ -604,7 +595,6 @@ QLineEdit{
               <font>
                <family>Noto Sans KR</family>
                <pointsize>12</pointsize>
-               <weight>75</weight>
                <bold>true</bold>
               </font>
              </property>
@@ -813,8 +803,7 @@ QLineEdit{
             <property name="font">
              <font>
               <family>Noto Sans KR</family>
-              <pointsize>14</pointsize>
-              <weight>75</weight>
+              <pointsize>12</pointsize>
               <bold>true</bold>
               <strikeout>false</strikeout>
               <kerning>true</kerning>
@@ -911,7 +900,7 @@ QLineEdit{
                </colorrole>
                <colorrole role="PlaceholderText">
                 <brush brushstyle="SolidPattern">
-                 <color alpha="255">
+                 <color alpha="128">
                   <red>255</red>
                   <green>255</green>
                   <blue>255</blue>
@@ -976,7 +965,7 @@ QLineEdit{
                </colorrole>
                <colorrole role="PlaceholderText">
                 <brush brushstyle="SolidPattern">
-                 <color alpha="255">
+                 <color alpha="128">
                   <red>255</red>
                   <green>255</green>
                   <blue>255</blue>
@@ -1041,7 +1030,7 @@ QLineEdit{
                </colorrole>
                <colorrole role="PlaceholderText">
                 <brush brushstyle="SolidPattern">
-                 <color alpha="255">
+                 <color alpha="128">
                   <red>255</red>
                   <green>255</green>
                   <blue>255</blue>
@@ -1054,13 +1043,12 @@ QLineEdit{
             <property name="font">
              <font>
               <family>Noto Sans KR</family>
-              <pointsize>14</pointsize>
-              <weight>75</weight>
+              <pointsize>12</pointsize>
               <bold>true</bold>
              </font>
             </property>
             <property name="text">
-             <string>  DATC Control</string>
+             <string>  Gripper Control</string>
             </property>
             <property name="icon">
              <iconset resource="../asset/feather_icon/resource.qrc">
@@ -1150,7 +1138,7 @@ QLineEdit{
                </colorrole>
                <colorrole role="PlaceholderText">
                 <brush brushstyle="SolidPattern">
-                 <color alpha="255">
+                 <color alpha="128">
                   <red>255</red>
                   <green>255</green>
                   <blue>255</blue>
@@ -1215,7 +1203,7 @@ QLineEdit{
                </colorrole>
                <colorrole role="PlaceholderText">
                 <brush brushstyle="SolidPattern">
-                 <color alpha="255">
+                 <color alpha="128">
                   <red>255</red>
                   <green>255</green>
                   <blue>255</blue>
@@ -1280,7 +1268,7 @@ QLineEdit{
                </colorrole>
                <colorrole role="PlaceholderText">
                 <brush brushstyle="SolidPattern">
-                 <color alpha="255">
+                 <color alpha="128">
                   <red>255</red>
                   <green>255</green>
                   <blue>255</blue>
@@ -1293,13 +1281,12 @@ QLineEdit{
             <property name="font">
              <font>
               <family>Noto Sans KR</family>
-              <pointsize>14</pointsize>
-              <weight>75</weight>
+              <pointsize>12</pointsize>
               <bold>true</bold>
              </font>
             </property>
             <property name="text">
-             <string>  Advanced</string>
+             <string>  Motor Control</string>
             </property>
             <property name="icon">
              <iconset resource="../asset/feather_icon/resource.qrc">
@@ -1389,7 +1376,7 @@ QLineEdit{
                </colorrole>
                <colorrole role="PlaceholderText">
                 <brush brushstyle="SolidPattern">
-                 <color alpha="255">
+                 <color alpha="128">
                   <red>255</red>
                   <green>255</green>
                   <blue>255</blue>
@@ -1454,7 +1441,7 @@ QLineEdit{
                </colorrole>
                <colorrole role="PlaceholderText">
                 <brush brushstyle="SolidPattern">
-                 <color alpha="255">
+                 <color alpha="128">
                   <red>255</red>
                   <green>255</green>
                   <blue>255</blue>
@@ -1519,7 +1506,7 @@ QLineEdit{
                </colorrole>
                <colorrole role="PlaceholderText">
                 <brush brushstyle="SolidPattern">
-                 <color alpha="255">
+                 <color alpha="128">
                   <red>255</red>
                   <green>255</green>
                   <blue>255</blue>
@@ -1532,8 +1519,7 @@ QLineEdit{
             <property name="font">
              <font>
               <family>Noto Sans KR</family>
-              <pointsize>14</pointsize>
-              <weight>75</weight>
+              <pointsize>12</pointsize>
               <bold>true</bold>
              </font>
             </property>

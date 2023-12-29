@@ -1,0 +1,3 @@
+ <launch>
+   <node pkg="gripper_test" type="gripper_test"  name="gripper_test" args="2 ui_on" output="screen"/>
+ </launch>

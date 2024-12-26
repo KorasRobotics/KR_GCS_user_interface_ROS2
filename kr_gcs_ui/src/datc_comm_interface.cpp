@@ -10,7 +10,7 @@
  */
 #include "datc_comm_interface.hpp"
 
-const uint kFreq = 50;
+const uint kFreq = 100;
 
 DatcCommInterface::DatcCommInterface(int argc, char **argv) {
     rclcpp::init(argc, argv);
@@ -113,8 +113,8 @@ DatcCommInterface::~DatcCommInterface() {
     modbusRelease();
 }
 
-bool DatcCommInterface::init(const char *port_name, uint slave_address) {
-    return modbusInit(port_name, slave_address);
+bool DatcCommInterface::init(const char *port_name, uint slave_address, int baudrate) {
+    return modbusInit(port_name, slave_address, baudrate);
 }
 
 void DatcCommInterface::pubTopic() {

@@ -22,7 +22,6 @@
 #include <iostream>
 #include <vector>
 
-#define BAUDRATE      38400
 #define DEBUG_MODE    false
 #define DATA_BIT      8
 #define STOP_BIT      1
@@ -39,10 +38,10 @@ public:
         modbusRelease();
     }
 
-    bool modbusInit(const char *port_name, uint16_t slave_addr) {
+    bool modbusInit(const char *port_name, uint16_t slave_addr, int baudrate) {
         unique_lock<mutex> lg(mutex_comm_);
 
-        mb_ = modbus_new_rtu(port_name, BAUDRATE, PARITY_MODE, DATA_BIT, STOP_BIT);
+        mb_ = modbus_new_rtu(port_name, baudrate, PARITY_MODE, DATA_BIT, STOP_BIT);
 
         modbus_rtu_set_serial_mode(mb_, MODBUS_RTU_RS485);
         modbus_rtu_set_rts_delay  (mb_, 300);

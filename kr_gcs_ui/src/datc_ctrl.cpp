@@ -16,8 +16,8 @@ DatcCtrl::DatcCtrl() {
 DatcCtrl::~DatcCtrl() {
 }
 
-bool DatcCtrl::modbusInit(const char *port_name, uint16_t slave_address) {
-    return mbc_.modbusInit(port_name, slave_address);
+bool DatcCtrl::modbusInit(const char *port_name, uint16_t slave_address, int baudrate) {
+    return mbc_.modbusInit(port_name, slave_address, baudrate);
 }
 
 bool DatcCtrl::modbusRelease() {
@@ -253,6 +253,15 @@ bool DatcCtrl::command(DATC_COMMAND cmd, uint16_t value_1, uint16_t value_2) {
         case DATC_COMMAND::VACUUM_GRIPPER_OFF:
             return SEND_CMD(cmd);
 
+        case DATC_COMMAND::IMPEDANCE_ON:
+            return SEND_CMD(cmd);
+
+        case DATC_COMMAND::IMPEDANCE_OFF:
+            return SEND_CMD(cmd);
+
+        case DATC_COMMAND::SET_IMPEDANCE_PARAMS:
+            return SEND_CMD_VECTOR(vector<uint16_t> ({(uint16_t) cmd, value_1, value_2}));
+
         case DATC_COMMAND::SET_MOTOR_TORQUE:
             return SEND_CMD_VECTOR(vector<uint16_t> ({(uint16_t) cmd, value_1}));
 
@@ -263,4 +272,35 @@ bool DatcCtrl::command(DATC_COMMAND cmd, uint16_t value_1, uint16_t value_2) {
             COUT("Error: Undefined command.");
             return false;
     }
+}
+
+// Impedance related functions
+bool DatcCtrl::impedanceOn() {
+    return command(DATC_COMMAND::IMPEDANCE_ON);
+}
+
+bool DatcCtrl::impedanceOff() {
+    return command(DATC_COMMAND::IMPEDANCE_OFF);
+}
+
+bool DatcCtrl::setImpedanceParams(int16_t slave_num, int16_t stiffness_level) {
+    string error_prefix = "[Set Impedance M]";
+
+    if (slave_num < 1) {
+        printf("%s slave_num is too small ( < %d)", error_prefix.c_str(), 1);
+        slave_num = 1;
+    } else if (slave_num > 100) {
+        printf("%s slave_num is too large ( > %d)", error_prefix.c_str(), 100);
+        slave_num = 100;
+    }
+
+    if (stiffness_level < 1) {
+        printf("%s stiffness_level is too small ( < %d)", error_prefix.c_str(), 1);
+        stiffness_level = 1;
+    } else if (stiffness_level > 10) {
+        printf("%s stiffness_level is too large ( > %d)", error_prefix.c_str(), 10);
+        stiffness_level = 10;
+    }
+
+    return command(DATC_COMMAND::SET_IMPEDANCE_PARAMS, slave_num, stiffness_level);
 }

@@ -37,10 +37,11 @@ using namespace std;
 namespace gripper_ui {
 
 enum class WidgetSeq {
-    MODBUS_WIDGET        = 0,
-    DATC_CTRL_WIDGET     = 1,
-    ADVANCED_CTRL_WIDGET = 2,
-    TCP_WIDGET           = 3
+    MODBUS_WIDGET         = 0,
+    DATC_CTRL_WIDGET      = 1,
+    ADVANCED_CTRL_WIDGET  = 2,
+    IMPEDANCE_CTRL_WIDGET = 3,
+    TCP_WIDGET            = 4,
 };
 
 class MainWindow : public QMainWindow {
@@ -59,6 +60,7 @@ public Q_SLOTS:
 
     // Datc control
     void datcFingerPosCtrl();
+    void datcFingerPosCtrl2();
     void datcMotorVelCtrl();
     void datcMotorCurCtrl();
 
@@ -71,6 +73,11 @@ public Q_SLOTS:
 
     void datcSetTorque();
     void datcSetSpeed();
+
+    // Impedance related functions
+    void datcImpedanceOn();
+    void datcImpedanceOff();
+    void datcSetImpedanceParams();
 
     // Modbus RTU related
     void initModbus();
@@ -89,6 +96,7 @@ public Q_SLOTS:
     void on_pushButton_select_datc_ctrl_clicked();
     void on_pushButton_select_adv_clicked();
     void on_pushButton_select_tcp_clicked();
+    void on_pushButton_select_imped_ctrl_clicked();
     void on_pushButton_modbus_refresh_clicked();
 
     // Serial port find function
@@ -97,10 +105,11 @@ public Q_SLOTS:
 private:
     Ui::MainWindow *ui_;
 
-    ModbusWidget       *modbus_widget_;
-    DatcCtrlWidget     *datc_ctrl_widget_;
-    TcpWidget          *tcp_widget_;
-    AdvancedCtrlWidget *advanced_ctrl_widget_;
+    ModbusWidget        *modbus_widget_;
+    DatcCtrlWidget      *datc_ctrl_widget_;
+    TcpWidget           *tcp_widget_;
+    AdvancedCtrlWidget  *advanced_ctrl_widget_;
+    ImpedanceCtrlWidget *impedance_ctrl_widget_;
 
     QString menu_btn_active_str_, menu_btn_inactive_str_;
     QString btn_active_str_, btn_inactive_str_;

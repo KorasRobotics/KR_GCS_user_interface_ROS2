@@ -35,21 +35,24 @@ const uint16_t kVelMax =  900;
 const uint16_t kCurMax = 1200;
 
 enum class DATC_COMMAND {
-    MOTOR_ENABLE           = 1,
-    MOTOR_STOP             = 2,
-    MOTOR_DISABLE          = 4,
-    MOTOR_POSITION_CONTROL = 5,
-    MOTOR_VELOCITY_CONTROL = 6,
-    MOTOR_CURRENT_CONTROL  = 7,
-    CHANGE_MODBUS_ADDRESS  = 50,
-    GRIPPER_INITIALIZE     = 101,
-    GRIPPER_OPEN           = 102,
-    GRIPPER_CLOSE          = 103,
-    SET_FINGER_POSITION    = 104,
-    VACUUM_GRIPPER_ON      = 106,
-    VACUUM_GRIPPER_OFF     = 107,
-    SET_MOTOR_TORQUE       = 212,
-    SET_MOTOR_SPEED        = 213,
+    MOTOR_ENABLE            = 1,
+    MOTOR_STOP              = 2,
+    MOTOR_DISABLE           = 4,
+    MOTOR_POSITION_CONTROL  = 5,
+    MOTOR_VELOCITY_CONTROL  = 6,
+    MOTOR_CURRENT_CONTROL   = 7,
+    CHANGE_MODBUS_ADDRESS   = 50,
+    GRIPPER_INITIALIZE      = 101,
+    GRIPPER_OPEN            = 102,
+    GRIPPER_CLOSE           = 103,
+    SET_FINGER_POSITION     = 104,
+    VACUUM_GRIPPER_ON       = 106,
+    VACUUM_GRIPPER_OFF      = 107,
+    IMPEDANCE_ON            = 108,
+    IMPEDANCE_OFF           = 109,
+    SET_IMPEDANCE_PARAMS    = 110,
+    SET_MOTOR_TORQUE        = 212,
+    SET_MOTOR_SPEED         = 213,
 };
 
 struct DatcStatus {
@@ -77,7 +80,7 @@ public:
     DatcCtrl();
     ~DatcCtrl();
 
-    bool modbusInit(const char *port_name, uint16_t slave_address);
+    bool modbusInit(const char *port_name, uint16_t slave_address, int baudrate);
     bool modbusRelease();
     bool modbusSlaveChange(uint16_t slave_addr);
 
@@ -109,6 +112,11 @@ public:
     bool getModbusRecvErr() {return flag_modbus_recv_err_;}
 
     uint16_t getSlaveAddr() {return mbc_.getSlaveAddr();}
+
+    // Impedance related functions
+    bool impedanceOn();
+    bool impedanceOff();
+    bool setImpedanceParams(int16_t slave_num, int16_t stiffness_level);
 
 protected:
     bool checkDurationRange(string error_prefix, uint16_t &duration);

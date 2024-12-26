@@ -10,8 +10,8 @@
 
 ---
 ## Dependencies
-- Boost
-- libmodbus
+- Boost v1.74
+- libmodbus v3.1.10
 - Qt
 - Feather-icon
 - Noto Sans

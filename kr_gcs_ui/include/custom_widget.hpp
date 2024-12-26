@@ -15,6 +15,7 @@
 #include "ui_datc_control_form.h"
 #include "ui_tcp_form.h"
 #include "ui_advanced_control.h"
+#include "ui_impedance_control_form.h"
 
 class ModbusWidget : public QWidget {
     Q_OBJECT
@@ -58,6 +59,17 @@ public:
     }
 
     Ui::AdvancedCtrlForm ui_;
+};
+
+class ImpedanceCtrlWidget : public QWidget {
+    Q_OBJECT
+
+public:
+    ImpedanceCtrlWidget(QWidget *parent = nullptr) : QWidget(parent) {
+        ui_.setupUi(this);
+    }
+
+    Ui::ImpedanceCtrlForm ui_;
 };
 
 #endif // CUSTOM_WIDGET_HPP

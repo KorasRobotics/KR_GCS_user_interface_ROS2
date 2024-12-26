@@ -17,10 +17,11 @@ namespace gripper_ui {
 MainWindow::MainWindow(int argc, char **argv, bool &success, QWidget *parent) : QMainWindow(parent) {
     ui_ = new Ui::MainWindow();
 
-    modbus_widget_        = new ModbusWidget(this);
-    datc_ctrl_widget_     = new DatcCtrlWidget(this);
-    tcp_widget_           = new TcpWidget(this);
-    advanced_ctrl_widget_ = new AdvancedCtrlWidget(this);
+    modbus_widget_         = new ModbusWidget(this);
+    datc_ctrl_widget_      = new DatcCtrlWidget(this);
+    tcp_widget_            = new TcpWidget(this);
+    advanced_ctrl_widget_  = new AdvancedCtrlWidget(this);
+    impedance_ctrl_widget_ = new ImpedanceCtrlWidget(this);
 
     ui_->setupUi(this);
 
@@ -31,6 +32,7 @@ MainWindow::MainWindow(int argc, char **argv, bool &success, QWidget *parent) : 
     ui_->stackedWidget->addWidget(modbus_widget_);
     ui_->stackedWidget->addWidget(datc_ctrl_widget_);
     ui_->stackedWidget->addWidget(advanced_ctrl_widget_);
+    ui_->stackedWidget->addWidget(impedance_ctrl_widget_);
 
 #ifndef RCLCPP__RCLCPP_HPP_
     ui_->stackedWidget->addWidget(tcp_widget_);
@@ -58,6 +60,10 @@ MainWindow::MainWindow(int argc, char **argv, bool &success, QWidget *parent) : 
     datc_ctrl_widget_->ui_.doubleSpinBox_torque->setValue    ((double) torque_init_value);
     datc_ctrl_widget_->ui_.doubleSpinBox_speed->setValue     ((double) speed_init_value);
 
+    // Initial values setting of impedance ctrl widget
+    impedance_ctrl_widget_->ui_.horizontalSlider_finger_pos->setValue(finger_pos_init_value);
+    impedance_ctrl_widget_->ui_.doubleSpinBox_finger_pos->setValue((double) finger_pos_init_value);
+
     // Combo box setting
     modbus_widget_->ui_.comboBox_serial_port->setEnabled(true);
     modbus_widget_->ui_.comboBox_serial_port->lineEdit()->setAlignment(Qt::AlignCenter);
@@ -70,8 +76,7 @@ MainWindow::MainWindow(int argc, char **argv, bool &success, QWidget *parent) : 
 
     modbus_widget_->ui_.comboBox_baudrate->setEnabled(true);
     modbus_widget_->ui_.comboBox_baudrate->addItems({"9600", "19200", "38400", "57600", "115200"});
-    modbus_widget_->ui_.comboBox_baudrate->setCurrentIndex(2);
-    modbus_widget_->ui_.comboBox_baudrate->setDisabled(true);
+    modbus_widget_->ui_.comboBox_baudrate->setCurrentIndex(4);
 
     // Check box setting
     QString checkbox_qstr = "QCheckBox::indicator {width:25px; height: 25px;}";
@@ -121,6 +126,22 @@ MainWindow::MainWindow(int argc, char **argv, bool &success, QWidget *parent) : 
     QObject::connect(modbus_widget_->ui_.pushButton_modbus_stop , SIGNAL(clicked()), this, SLOT(releaseModbus()));
     QObject::connect(modbus_widget_->ui_.pushButton_modbus_slave_change  , SIGNAL(clicked()), this, SLOT(changeSlaveAddress()));
     QObject::connect(modbus_widget_->ui_.pushButton_modbus_set_slave_addr, SIGNAL(clicked()), this, SLOT(setSlaveAddr()));
+
+    // Impedance control related btn
+    QObject::connect(impedance_ctrl_widget_->ui_.pushButton_cmd_impedance_on       , SIGNAL(clicked()), this, SLOT(datcImpedanceOn()));
+    QObject::connect(impedance_ctrl_widget_->ui_.pushButton_cmd_impedance_off      , SIGNAL(clicked()), this, SLOT(datcImpedanceOff()));
+    QObject::connect(impedance_ctrl_widget_->ui_.pushButton_set_impedance_params   , SIGNAL(clicked()), this, SLOT(datcSetImpedanceParams()));
+
+    QObject::connect(impedance_ctrl_widget_->ui_.pushButton_cmd_enable  , SIGNAL(clicked()), this, SLOT(datcEnable()));
+    QObject::connect(impedance_ctrl_widget_->ui_.pushButton_cmd_disable , SIGNAL(clicked()), this, SLOT(datcDisable()));
+    QObject::connect(impedance_ctrl_widget_->ui_.pushButton_set_position, SIGNAL(clicked()), this, SLOT(datcFingerPosCtrl2()));
+
+    QObject::connect(impedance_ctrl_widget_->ui_.pushButton_cmd_initialize    , SIGNAL(clicked()), this, SLOT(datcInit()));
+    QObject::connect(impedance_ctrl_widget_->ui_.pushButton_cmd_grp_open      , SIGNAL(clicked()), this, SLOT(datcOpen()));
+    QObject::connect(impedance_ctrl_widget_->ui_.pushButton_cmd_grp_close     , SIGNAL(clicked()), this, SLOT(datcClose()));
+    QObject::connect(impedance_ctrl_widget_->ui_.pushButton_cmd_grp_stop      , SIGNAL(clicked()), this, SLOT(datcStop()));
+    QObject::connect(impedance_ctrl_widget_->ui_.pushButton_cmd_grp_vacuum_on , SIGNAL(clicked()), this, SLOT(datcVacuumGrpOn()));
+    QObject::connect(impedance_ctrl_widget_->ui_.pushButton_cmd_grp_vacuum_off, SIGNAL(clicked()), this, SLOT(datcVacuumGrpOff()));
 
 #ifndef RCLCPP__RCLCPP_HPP_
     // TCP socket commiunication related btn
@@ -218,13 +239,15 @@ void MainWindow::timerCallback() {
     });
 
     // Finger position control side
-    static int slider_finger_pos_prev = datc_ctrl_widget_->ui_.horizontalSlider_finger_pos->value();
-    static int slider_torque_prev     = datc_ctrl_widget_->ui_.verticalSlider_torque->value();
-    static int slider_speed_prev      = datc_ctrl_widget_->ui_.verticalSlider_speed ->value();
+    static int slider_finger_pos_prev  = datc_ctrl_widget_->ui_.horizontalSlider_finger_pos->value();
+    static int slider_torque_prev      = datc_ctrl_widget_->ui_.verticalSlider_torque->value();
+    static int slider_speed_prev       = datc_ctrl_widget_->ui_.verticalSlider_speed ->value();
+    static int slider_finger_pos_prev2 = impedance_ctrl_widget_->ui_.horizontalSlider_finger_pos->value();
 
-    static double finger_pos_prev = datc_ctrl_widget_->ui_.doubleSpinBox_finger_pos->value();
-    static double torque_prev     = datc_ctrl_widget_->ui_.doubleSpinBox_torque->value();
-    static double speed_prev      = datc_ctrl_widget_->ui_.doubleSpinBox_speed->value();
+    static double finger_pos_prev  = datc_ctrl_widget_->ui_.doubleSpinBox_finger_pos->value();
+    static double torque_prev      = datc_ctrl_widget_->ui_.doubleSpinBox_torque->value();
+    static double speed_prev       = datc_ctrl_widget_->ui_.doubleSpinBox_speed->value();
+    static double finger_pos_prev2 = impedance_ctrl_widget_->ui_.doubleSpinBox_finger_pos->value();
 
     syncSliderSpinboxFn(slider_finger_pos_prev, finger_pos_prev,
                         datc_ctrl_widget_->ui_.horizontalSlider_finger_pos,
@@ -235,6 +258,9 @@ void MainWindow::timerCallback() {
     syncSliderSpinboxFn(slider_speed_prev, speed_prev,
                         datc_ctrl_widget_->ui_.verticalSlider_speed,
                         datc_ctrl_widget_->ui_.doubleSpinBox_speed);
+    syncSliderSpinboxFn(slider_finger_pos_prev2, finger_pos_prev2,
+                        impedance_ctrl_widget_->ui_.horizontalSlider_finger_pos,
+                        impedance_ctrl_widget_->ui_.doubleSpinBox_finger_pos);
 
     // Advanced control side
     const int vel_min_percent = (int) ((double) kVelMin / (double) kVelMax * 100);
@@ -269,6 +295,10 @@ void MainWindow::datcDisable() {
 // Datc control
 void MainWindow::datcFingerPosCtrl() {
     datc_interface_->setFingerPos(datc_ctrl_widget_->ui_.doubleSpinBox_finger_pos->value() * 10);
+}
+
+void MainWindow::datcFingerPosCtrl2() {
+    datc_interface_->setFingerPos(impedance_ctrl_widget_->ui_.doubleSpinBox_finger_pos->value() * 10);
 }
 
 void MainWindow::datcMotorVelCtrl() {
@@ -315,6 +345,26 @@ void MainWindow::datcSetSpeed() {
     datc_interface_->setMotorSpeed((uint16_t) datc_ctrl_widget_->ui_.doubleSpinBox_speed->value());
 }
 
+// Impedance related functions
+void MainWindow::datcImpedanceOn() {
+    datc_interface_->impedanceOn();
+    usleep(100000);
+    datc_interface_->grpInitialize();
+}
+
+void MainWindow::datcImpedanceOff() {
+    datc_interface_->impedanceOff();
+    usleep(100000);
+    datc_interface_->grpInitialize();
+}
+
+void MainWindow::datcSetImpedanceParams() {
+    int16_t slave_num       = impedance_ctrl_widget_->ui_.spinBox_impedance_slave_num->value();
+    int16_t stiffness_level = impedance_ctrl_widget_->ui_.spinBox_impedance_stiffness_level->value();
+
+    datc_interface_->setImpedanceParams(slave_num, stiffness_level);
+}
+
 // Modbus RTU related
 void MainWindow::initModbus() {
     COUT("--------------------------------------------");
@@ -325,7 +375,11 @@ void MainWindow::initModbus() {
     const char* port = modbus_widget_->ui_.comboBox_serial_port->currentText().toStdString().c_str();
     uint16_t slave_addr = modbus_widget_->ui_.spinBox_slave_addr->value();
 
-    if (datc_interface_->init(port, slave_addr)) {
+    // 왜인지 이렇게 우회해야만 release mode에서 정상적으로 동작함
+    auto baudrate_qstr = modbus_widget_->ui_.comboBox_baudrate->currentText();
+    auto baudrate = baudrate_qstr.toInt();
+
+    if (datc_interface_->init(port, slave_addr, baudrate)) {
         // Successed
     } else {
         ui_->lineEdit_monitor_mode->setText("Invalid port or permission.");
@@ -375,37 +429,51 @@ void MainWindow::stopTcpComm() {
 void MainWindow::on_pushButton_select_modbus_clicked() {
     ui_->stackedWidget->setCurrentIndex((int) WidgetSeq::MODBUS_WIDGET);
 
-    ui_->pushButton_select_modbus   ->setStyleSheet(menu_btn_active_str_);
-    ui_->pushButton_select_datc_ctrl->setStyleSheet(menu_btn_inactive_str_);
-    ui_->pushButton_select_adv      ->setStyleSheet(menu_btn_inactive_str_);
-    ui_->pushButton_select_tcp      ->setStyleSheet(menu_btn_inactive_str_);
+    ui_->pushButton_select_modbus    ->setStyleSheet(menu_btn_active_str_);
+    ui_->pushButton_select_datc_ctrl ->setStyleSheet(menu_btn_inactive_str_);
+    ui_->pushButton_select_adv       ->setStyleSheet(menu_btn_inactive_str_);
+    ui_->pushButton_select_tcp       ->setStyleSheet(menu_btn_inactive_str_);
+    ui_->pushButton_select_imped_ctrl->setStyleSheet(menu_btn_inactive_str_);
 }
 
 void MainWindow::on_pushButton_select_datc_ctrl_clicked() {
     ui_->stackedWidget->setCurrentIndex((int) WidgetSeq::DATC_CTRL_WIDGET);
 
-    ui_->pushButton_select_modbus   ->setStyleSheet(menu_btn_inactive_str_);
-    ui_->pushButton_select_datc_ctrl->setStyleSheet(menu_btn_active_str_);
-    ui_->pushButton_select_adv      ->setStyleSheet(menu_btn_inactive_str_);
-    ui_->pushButton_select_tcp      ->setStyleSheet(menu_btn_inactive_str_);
+    ui_->pushButton_select_modbus    ->setStyleSheet(menu_btn_inactive_str_);
+    ui_->pushButton_select_datc_ctrl ->setStyleSheet(menu_btn_active_str_);
+    ui_->pushButton_select_adv       ->setStyleSheet(menu_btn_inactive_str_);
+    ui_->pushButton_select_tcp       ->setStyleSheet(menu_btn_inactive_str_);
+    ui_->pushButton_select_imped_ctrl->setStyleSheet(menu_btn_inactive_str_);
 }
 
 void MainWindow::on_pushButton_select_adv_clicked() {
     ui_->stackedWidget->setCurrentIndex((int) WidgetSeq::ADVANCED_CTRL_WIDGET);
 
-    ui_->pushButton_select_modbus   ->setStyleSheet(menu_btn_inactive_str_);
-    ui_->pushButton_select_datc_ctrl->setStyleSheet(menu_btn_inactive_str_);
-    ui_->pushButton_select_adv      ->setStyleSheet(menu_btn_active_str_);
-    ui_->pushButton_select_tcp      ->setStyleSheet(menu_btn_inactive_str_);
+    ui_->pushButton_select_modbus    ->setStyleSheet(menu_btn_inactive_str_);
+    ui_->pushButton_select_datc_ctrl ->setStyleSheet(menu_btn_inactive_str_);
+    ui_->pushButton_select_adv       ->setStyleSheet(menu_btn_active_str_);
+    ui_->pushButton_select_tcp       ->setStyleSheet(menu_btn_inactive_str_);
+    ui_->pushButton_select_imped_ctrl->setStyleSheet(menu_btn_inactive_str_);
 }
 
 void MainWindow::on_pushButton_select_tcp_clicked() {
     ui_->stackedWidget->setCurrentIndex((int) WidgetSeq::TCP_WIDGET);
 
-    ui_->pushButton_select_modbus   ->setStyleSheet(menu_btn_inactive_str_);
-    ui_->pushButton_select_datc_ctrl->setStyleSheet(menu_btn_inactive_str_);
-    ui_->pushButton_select_adv      ->setStyleSheet(menu_btn_inactive_str_);
-    ui_->pushButton_select_tcp      ->setStyleSheet(menu_btn_active_str_);
+    ui_->pushButton_select_modbus    ->setStyleSheet(menu_btn_inactive_str_);
+    ui_->pushButton_select_datc_ctrl ->setStyleSheet(menu_btn_inactive_str_);
+    ui_->pushButton_select_adv       ->setStyleSheet(menu_btn_inactive_str_);
+    ui_->pushButton_select_tcp       ->setStyleSheet(menu_btn_active_str_);
+    ui_->pushButton_select_imped_ctrl->setStyleSheet(menu_btn_inactive_str_);
+}
+
+void MainWindow::on_pushButton_select_imped_ctrl_clicked() {
+    ui_->stackedWidget->setCurrentIndex((int) WidgetSeq::IMPEDANCE_CTRL_WIDGET);
+
+    ui_->pushButton_select_modbus    ->setStyleSheet(menu_btn_inactive_str_);
+    ui_->pushButton_select_datc_ctrl ->setStyleSheet(menu_btn_inactive_str_);
+    ui_->pushButton_select_adv       ->setStyleSheet(menu_btn_inactive_str_);
+    ui_->pushButton_select_tcp       ->setStyleSheet(menu_btn_inactive_str_);
+    ui_->pushButton_select_imped_ctrl->setStyleSheet(menu_btn_active_str_);
 }
 
 void MainWindow::on_pushButton_modbus_refresh_clicked() {

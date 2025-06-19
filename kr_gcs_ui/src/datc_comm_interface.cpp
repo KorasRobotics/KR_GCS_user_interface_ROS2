@@ -27,66 +27,79 @@ DatcCommInterface::DatcCommInterface(int argc, char **argv) {
 
     srv_motor_enable_ = nh_->create_service<Void>("motor_enable",
                         [&] (const shared_ptr<Void::Request> req, shared_ptr<Void::Response> res) {
+                            COUT("[Service called] motor_enable");
                             res->successed = motorEnable();
                         });
 
     srv_motor_disable_ = nh_->create_service<Void>("motor_disable",
                          [&] (const shared_ptr<Void::Request> req, shared_ptr<Void::Response> res) {
+                             COUT("[Service called] motor_disable");
                              res->successed = motorDisable();
                          });
 
     srv_modbus_slave_change_ = nh_->create_service<SingleInt>("modbus_slave_change",
                                [&] (const shared_ptr<SingleInt::Request> req, shared_ptr<SingleInt::Response> res) {
+                                   COUT("[Service called] modbus_slave_change, input: " << (uint) req->value);
                                    res->successed = modbusSlaveChange((uint) req->value);
                                });
 
     srv_set_modbus_addr_ = nh_->create_service<SingleInt>("set_modbus_addr",
                            [&] (const shared_ptr<SingleInt::Request> req, shared_ptr<SingleInt::Response> res) {
+                               COUT("[Service called] set_modbus_addr, input: " << (uint) req->value);
                                res->successed = setModbusAddr((uint) req->value);
                            });
 
     srv_set_finger_pos_ = nh_->create_service<SingleInt>("set_finger_pos",
                           [&] (const shared_ptr<SingleInt::Request> req, shared_ptr<SingleInt::Response> res) {
+                              COUT("[Service called] set_finger_pos, input: " << (uint) req->value);
                               res->successed = setFingerPos((uint) req->value);
                           });
 
     srv_set_motor_torque_ = nh_->create_service<SingleInt>("set_motor_torque",
                             [&] (const shared_ptr<SingleInt::Request> req, shared_ptr<SingleInt::Response> res) {
+                                COUT("[Service called] set_motor_torque, input: " << (uint) req->value);
                                 res->successed = setMotorTorque((uint) req->value);
                             });
 
     srv_set_motor_speed_ = nh_->create_service<SingleInt>("set_motor_speed",
                            [&] (const shared_ptr<SingleInt::Request> req, shared_ptr<SingleInt::Response> res) {
+                               COUT("[Service called] set_motor_speed, input: " << (uint) req->value);
                                res->successed = setMotorSpeed((uint) req->value);
                            });
 
     srv_motor_stop_ = nh_->create_service<Void>("motor_stop",
                       [&] (const shared_ptr<Void::Request> req, shared_ptr<Void::Response> res) {
+                          COUT("[Service called] motor_stop");
                           res->successed = motorStop();
                       });
 
     srv_grp_initialize_ = nh_->create_service<Void>("gripper_initialize",
                           [&] (const shared_ptr<Void::Request> req, shared_ptr<Void::Response> res) {
+                              COUT("[Service called] gripper_initialize");
                               res->successed = grpInitialize();
                           });
 
     srv_grp_open_ = nh_->create_service<Void>("grp_open",
                     [&] (const shared_ptr<Void::Request> req, shared_ptr<Void::Response> res) {
+                        COUT("[Service called] grp_open");
                         res->successed = grpOpen();
                     });
 
     srv_grp_close_ = nh_->create_service<Void>("grp_close",
                      [&] (const shared_ptr<Void::Request> req, shared_ptr<Void::Response> res) {
+                         COUT("[Service called] grp_close");
                          res->successed = grpClose();
                      });
 
     srv_vacuum_grp_on_ = nh_->create_service<Void>("vacuum_grp_on",
                          [&] (const shared_ptr<Void::Request> req, shared_ptr<Void::Response> res) {
+                             COUT("[Service called] vacuum_grp_on");
                              res->successed = vacuumGrpOn();
                          });
 
     srv_vacuum_grp_off_ = nh_->create_service<Void>("vacuum_grp_off",
                           [&] (const shared_ptr<Void::Request> req, shared_ptr<Void::Response> res) {
+                              COUT("[Service called] vacuum_grp_off");
                               res->successed = vacuumGrpOff();
                           });
 
@@ -97,11 +110,13 @@ DatcCommInterface::DatcCommInterface(int argc, char **argv) {
 
     srv_motor_vel_ctrl_ = nh_->create_service<PosVelCurCtrl>("motor_vel_ctrl",
                           [&] (const shared_ptr<PosVelCurCtrl::Request> req, shared_ptr<PosVelCurCtrl::Response> res) {
+                              COUT("[Service called] motor_vel_ctrl, input: " << req->velocity);
                               res->successed = motorVelCtrl(req->velocity);
                           });
 
     srv_motor_cur_ctrl_ = nh_->create_service<PosVelCurCtrl>("motor_cur_ctrl",
                           [&] (const shared_ptr<PosVelCurCtrl::Request> req, shared_ptr<PosVelCurCtrl::Response> res) {
+                              COUT("[Service called] motor_cur_ctrl, input: " << req->current);
                               res->successed = motorCurCtrl(req->current);
                           });
 

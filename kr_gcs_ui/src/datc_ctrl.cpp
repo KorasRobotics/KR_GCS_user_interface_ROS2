@@ -67,10 +67,10 @@ bool DatcCtrl::setFingerPos(uint16_t finger_pos) {
     string error_prefix = "[Set Finger Position]";
 
     if (finger_pos < kFingerPosMin) {
-        printf("%s Invalid range of finger position ( < %d)", error_prefix.c_str(), kFingerPosMin);
+        printf("[Error] %s Invalid range of finger position ( < %d)\n", error_prefix.c_str(), kFingerPosMin);
         finger_pos = kFingerPosMin;
     } else if (finger_pos > kFingerPosMax) {
-        printf("%s Invalid range of finger position ( > %d)", error_prefix.c_str(), kFingerPosMax);
+        printf("[Error] %s Invalid range of finger position ( > %d)\n", error_prefix.c_str(), kFingerPosMax);
         finger_pos = kFingerPosMax;
     }
 
@@ -81,10 +81,10 @@ bool DatcCtrl::motorVelCtrl(int16_t vel) {
     string error_prefix = "[Motor Velocity Control]";
 
     if (abs(vel) < kVelMin) {
-        printf("%s Invalid range of speed ( < %d)", error_prefix.c_str(), kVelMin);
+        printf("[Error] %s Invalid range of speed ( < %d)\n", error_prefix.c_str(), kVelMin);
         vel = (vel >= 0) ? kVelMin : -kVelMin;
     } else if (abs(vel) > kVelMax) {
-        printf("%s Invalid range of speed ( > %d)", error_prefix.c_str(), kVelMax);
+        printf("[Error] %s Invalid range of speed ( > %d)\n", error_prefix.c_str(), kVelMax);
         vel = (vel >= 0) ? kVelMax : -kVelMax;
     }
 
@@ -95,7 +95,7 @@ bool DatcCtrl::motorCurCtrl(int16_t cur) {
     string error_prefix = "[Motor Current Control]";
 
     if (abs(cur) > kCurMax) {
-        printf("%s Invalid range of current ( > %d)", error_prefix.c_str(), kCurMax);
+        printf("[Error] %s Invalid range of current ( > %d)\n", error_prefix.c_str(), kCurMax);
         cur = (cur >= 0) ? kCurMax : -kCurMax;
     }
 
@@ -120,10 +120,10 @@ bool DatcCtrl::setMotorTorque(uint16_t torque_ratio) {
     string error_prefix = "[Set Motor Torque]";
 
     if (torque_ratio < kTorqueRatioMin) {
-        printf("%s Motor torque is too low ( < %d)", error_prefix.c_str(), kTorqueRatioMin);
+        printf("[Error] %s Motor torque is too low ( < %d)\n", error_prefix.c_str(), kTorqueRatioMin);
         torque_ratio = kTorqueRatioMin;
     } else if (torque_ratio > kTorqueRatioMax) {
-        printf("%s Motor torque is too high ( > %d)", error_prefix.c_str(), kTorqueRatioMax);
+        printf("[Error] %s Motor torque is too high ( > %d)\n", error_prefix.c_str(), kTorqueRatioMax);
         torque_ratio = kTorqueRatioMax;
     }
 
@@ -134,10 +134,10 @@ bool DatcCtrl::setMotorSpeed (uint16_t speed_ratio) {
     string error_prefix = "[Set Motor Speed]";
 
     if (speed_ratio < kSpeedRatioMin) {
-        printf("%s Motor torque is too low ( < %d)", error_prefix.c_str(), kSpeedRatioMin);
+        printf("[Error] %s Motor torque is too low ( < %d)\n", error_prefix.c_str(), kSpeedRatioMin);
         speed_ratio = kSpeedRatioMin;
     } else if (speed_ratio > kSpeedRatioMax) {
-        printf("%s Motor torque is too high ( > %d)", error_prefix.c_str(), kSpeedRatioMax);
+        printf("[Error] %s Motor torque is too high ( > %d)\n", error_prefix.c_str(), kSpeedRatioMax);
         speed_ratio = kSpeedRatioMax;
     }
 
@@ -200,11 +200,11 @@ bool DatcCtrl::readDatcData() {
 
 bool DatcCtrl::checkDurationRange(string error_prefix, uint16_t &duration) {
     if (duration < kDurationMin) {
-        printf("%s Duration is too short ( < %dms)", error_prefix.c_str(), kDurationMin);
+        printf("[Error] %s Duration is too short ( < %dms)\n", error_prefix.c_str(), kDurationMin);
         duration = kDurationMin;
         return false;
     } else if (duration > kDurationMax) {
-        printf("%s Duration is too long ( > %dms)", error_prefix.c_str(), kDurationMax);
+        printf("[Error] %s Duration is too long ( > %dms)\n", error_prefix.c_str(), kDurationMax);
         duration = kDurationMax;
         return false;
     }
@@ -287,18 +287,18 @@ bool DatcCtrl::setImpedanceParams(int16_t slave_num, int16_t stiffness_level) {
     string error_prefix = "[Set Impedance M]";
 
     if (slave_num < 1) {
-        printf("%s slave_num is too small ( < %d)", error_prefix.c_str(), 1);
+        printf("[Error] %s slave_num is too small ( < %d)\n", error_prefix.c_str(), 1);
         slave_num = 1;
     } else if (slave_num > 100) {
-        printf("%s slave_num is too large ( > %d)", error_prefix.c_str(), 100);
+        printf("[Error] %s slave_num is too large ( > %d)\n", error_prefix.c_str(), 100);
         slave_num = 100;
     }
 
     if (stiffness_level < 1) {
-        printf("%s stiffness_level is too small ( < %d)", error_prefix.c_str(), 1);
+        printf("[Error] %s stiffness_level is too small ( < %d)\n", error_prefix.c_str(), 1);
         stiffness_level = 1;
     } else if (stiffness_level > 10) {
-        printf("%s stiffness_level is too large ( > %d)", error_prefix.c_str(), 10);
+        printf("[Error] %s stiffness_level is too large ( > %d)\n", error_prefix.c_str(), 10);
         stiffness_level = 10;
     }
 

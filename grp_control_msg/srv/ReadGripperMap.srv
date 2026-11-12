@@ -1,0 +1,7 @@
+uint16 index
+---
+bool successed
+uint16 index
+uint16 stroke_mm
+uint16 force_n
+uint16 payload_x10

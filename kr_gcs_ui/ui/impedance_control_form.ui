@@ -2804,7 +2804,7 @@ Gripper Off</string>
                     <number>1</number>
                    </property>
                    <property name="maximum">
-                    <number>100</number>
+                    <number>247</number>
                    </property>
                    <property name="value">
                     <number>1</number>

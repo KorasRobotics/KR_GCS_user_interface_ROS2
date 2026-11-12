@@ -505,7 +505,7 @@ QLineEdit{
         </font>
        </property>
        <property name="text">
-        <string>  Send DATC Status</string>
+        <string>  Send MATC Status</string>
        </property>
        <property name="checked">
         <bool>true</bool>

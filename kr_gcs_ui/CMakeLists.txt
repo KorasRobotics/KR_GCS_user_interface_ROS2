@@ -19,11 +19,13 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(grp_control_msg REQUIRED)
+find_package(Boost REQUIRED)   # boost::asio - firmware updater (Dev tab)
 find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets REQUIRED)
 
 include_directories(
   ${PROJECT_SOURCE_DIR}/include
+  ${Boost_INCLUDE_DIRS}
 )
 
 set(CMAKE_AUTOUIC_SEARCH_PATHS ${PROJECT_SOURCE_DIR}/ui)

@@ -22,6 +22,10 @@ rosidl_generate_interfaces(${PROJECT_NAME}
     "srv/SingleBoolean.srv"
     "srv/SingleInt.srv"
     "srv/Void.srv"
+    "srv/ImpedanceParams.srv"
+    "srv/WriteGripperMap.srv"
+    "srv/ReadGripperMap.srv"
+    "srv/SetModbusBaudrate.srv"
     DEPENDENCIES builtin_interfaces std_msgs
 )
 

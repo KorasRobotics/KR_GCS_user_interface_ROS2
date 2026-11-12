@@ -18,6 +18,7 @@
 #include <modbus/modbus-rtu.h>
 #endif
 
+#include <atomic>
 #include <mutex>
 #include <iostream>
 #include <vector>
@@ -43,24 +44,26 @@ public:
 
         mb_ = modbus_new_rtu(port_name, baudrate, PARITY_MODE, DATA_BIT, STOP_BIT);
 
-        modbus_rtu_set_serial_mode(mb_, MODBUS_RTU_RS485);
-        modbus_rtu_set_rts_delay  (mb_, 300);
-        modbus_set_debug          (mb_, DEBUG_MODE);
-
         if (mb_ == NULL) {
             fprintf(stderr, "Unable to create the libmodbus context\n");
             return false;
         }
 
+        modbus_rtu_set_serial_mode(mb_, MODBUS_RTU_RS485);
+        modbus_rtu_set_rts_delay  (mb_, 300);
+        modbus_set_debug          (mb_, DEBUG_MODE);
+
         if (modbus_set_slave(mb_, slave_addr) == -1) {
             fprintf(stderr, "server_id= %d Invalid slave ID: %s\n", slave_addr, modbus_strerror(errno));
             modbus_free(mb_);
+            mb_ = nullptr;
             return false;
         }
 
         if (modbus_connect(mb_) == -1) {
             fprintf(stderr, "Unable to connect %s\n", modbus_strerror(errno));
             modbus_free(mb_);
+            mb_ = nullptr;
             return false;
         }
 
@@ -77,8 +80,13 @@ public:
 
         unique_lock<mutex> lg(mutex_comm_);
 
+        if (mb_ == nullptr) {
+            return;
+        }
+
         modbus_close(mb_);
         modbus_free (mb_);
+        mb_ = nullptr;
         COUT("Modbus released");
     }
 
@@ -87,10 +95,15 @@ public:
 
         unique_lock<mutex> lg(mutex_comm_);
 
+        if (mb_ == nullptr) {
+            return false;
+        }
+
         if (modbus_set_slave(mb_, slave_addr) == -1) {
             fprintf(stderr, "server_id= %d Invalid slave ID: %s\n", slave_addr, modbus_strerror(errno));
             modbus_close(mb_);
             modbus_free (mb_);
+            mb_ = nullptr;
             connection_state_ = false;
             return false;
         }
@@ -142,7 +155,13 @@ public:
         }
     }
 
-    bool recvData(int reg_addr, int nb, vector<uint16_t> &data) {
+    // err (optional): libmodbus errno of a failed read, e.g. EMBXILADD when the device
+    // has no such register (older firmware with a smaller register map). 0 = not sent.
+    bool recvData(int reg_addr, int nb, vector<uint16_t> &data, int *err = nullptr) {
+        if (err != nullptr) {
+            *err = 0;
+        }
+
         if (!connection_state_) {
             COUT("Modbus communication is not enabled.");
             return false;
@@ -150,11 +169,14 @@ public:
 
         unique_lock<mutex> lg(mutex_comm_);
 
-        uint16_t data_temp[nb];
+        vector<uint16_t> data_temp(nb);
 
-        if (modbus_read_registers(mb_, reg_addr, nb, data_temp) == -1) {
-            mutex_comm_.unlock();
-            fprintf(stderr, "Failed to read input registers! : %s\n", modbus_strerror(errno));
+        if (modbus_read_registers(mb_, reg_addr, nb, data_temp.data()) == -1) {
+            const int e = errno;
+            if (err != nullptr) {
+                *err = e;
+            }
+            fprintf(stderr, "Failed to read input registers! : %s\n", modbus_strerror(e));
             return false;
         }
 
@@ -173,9 +195,10 @@ public:
 
 private:
     mutex mutex_comm_;
-    modbus_t *mb_;
+    modbus_t *mb_ = nullptr;
 
-    bool connection_state_ = false;
+    // Read by the polling thread and the UI/TCP threads without mutex_comm_ - must be atomic.
+    std::atomic<bool> connection_state_{false};
 
     uint16_t slave_num_ = 0;
 };

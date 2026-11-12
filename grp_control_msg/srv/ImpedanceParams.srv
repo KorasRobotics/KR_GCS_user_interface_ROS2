@@ -1,0 +1,4 @@
+int16 slave_num
+int16 stiffness_level
+---
+bool successed

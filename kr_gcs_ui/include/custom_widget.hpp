@@ -16,6 +16,7 @@
 #include "ui_tcp_form.h"
 #include "ui_advanced_control.h"
 #include "ui_impedance_control_form.h"
+#include "ui_dev_tab_form.h"
 
 class ModbusWidget : public QWidget {
     Q_OBJECT
@@ -70,6 +71,17 @@ public:
     }
 
     Ui::ImpedanceCtrlForm ui_;
+};
+
+class DevTabWidget : public QWidget {
+    Q_OBJECT
+
+public:
+    DevTabWidget(QWidget *parent = nullptr) : QWidget(parent) {
+        ui_.setupUi(this);
+    }
+
+    Ui::DevTabForm ui_;
 };
 
 #endif // CUSTOM_WIDGET_HPP
